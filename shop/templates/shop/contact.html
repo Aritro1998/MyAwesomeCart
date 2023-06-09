@@ -1,0 +1,61 @@
+{% extends 'shop/base.html' %}
+{% block title %}Contact Us{% endblock %}
+{% block body %}
+    {% load static %}
+    <div class="container-fluid px-0 mb-3 fix">
+        <img src="{% static 'shop/contactus.jpg' %}" class="d-block w-100 mx-o">
+    </div>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="liveToast"
+             class="toast"
+             role="alert"
+             aria-live="assertive"
+             aria-atomic="true">
+            <div class="toast-header bg-success">
+                {% comment %} <img src="..." class="rounded me-2" alt="..."> {% endcomment %}
+                <strong class="me-auto text-dark">Successful</strong>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+            </div>
+            <div class="toast-body">Your query has been registered successfully.</div>
+        </div>
+    </div>
+    <div class="container mx-auto p-2" style="width: 700px;">
+        <form method="post" action="/shop/contact/" class="contact">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name">
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email address</label>
+                <input type="email"
+                       class="form-control"
+                       id="email"
+                       name="email"
+                       aria-describedby="emailHelp">
+                <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label">Phone</label>
+                <input type="tel" class="form-control" id="phone" name="phone">
+                <div id="emailHelp" class="form-text">We'll never share your phone no. with anyone else.</div>
+            </div>
+            <div class="mb-3">
+                <label for="desc" class="form-label">Tell me about what you want to contact me for...</label>
+                <textarea type="text" class="form-control" id="desc" name="desc"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+{% endblock %}
+{% block js %}
+    <script>
+        {%if added %}
+            const toast = new bootstrap.Toast(document.getElementById('liveToast'))
+            toast.show();
+        {%endif %}
+    </script>
+{% endblock %}

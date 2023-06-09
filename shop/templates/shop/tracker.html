@@ -1,0 +1,84 @@
+{% extends 'shop/base.html' %}
+{% block title %}Tracker{% endblock %}
+{% block body %}
+    <div class="container">
+        <div class="col my-5">
+            <h3 class="my-4">MyAwesomeCart Tracker - Enter Tracking Number & Email Address</h3>
+            <form class="row g-3 mx-5 needs-validation"
+                  method="post"
+                  action="#"
+                  id="trackerForm"
+                  novalidate>
+                {% csrf_token %}
+                <div class="col-md-4">
+                    <label for="orderId" class="form-label">Tracking Number</label>
+                    <input type="number"
+                           class="form-control"
+                           id="orderId"
+                           name="orderId"
+                           required>
+                    <div class="invalid-feedback">This field can't be empty.</div>
+                </div>
+                <div class="col-md-4">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email"
+                           class="form-control"
+                           id="email"
+                           name="email"
+                           required>
+                    <div class="invalid-feedback">This field can't be empty.</div>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Track Order</button>
+                </div>
+            </form>
+        </div>
+        <div class="col my-5">
+            <span id="heading"></span>
+            <div class="my-3">
+                <ul class="list-group mx-5" id="items">
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script>
+        $('#trackerForm').submit(function(event) {
+            $('#items').empty();
+            var formData = {
+                'orderId': $('input[name=orderId]').val(),
+                'email': $('input[name=email]').val(),
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+            };
+            $('#heading').append('<h2 class="my-4">Your Order Status :</h2>')
+            $.ajax({
+                    type: 'POST',
+                    url: '/shop/tracker/',
+                    data: formData,
+                    encode: true
+                })
+                .done(function(data) {
+                    console.log(data)
+                    updates = JSON.parse(data);
+                    if (updates.length > 0 & updates != {}) {
+                        for (i = 0; i < updates.length; i++) {
+                            let text = updates[i]['text'];
+                            let time = updates[i]['time'];
+                            mystr = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                    ${text}
+                                    <span">${time}</span>
+                                </li>`
+                            $('#items').append(mystr);
+                        }
+                    } else {
+                        mystr = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Sorry, We are not able to fetch this order id and email. Make sure to type correct order Id and email
+                                </li>`
+                        $('#items').append(mystr);
+                    }
+                });
+            event.preventDefault();
+        });
+    </script>
+{% endblock %}
